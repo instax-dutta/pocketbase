@@ -150,10 +150,8 @@ docker run -d \
 
 For Pterodactyl, import the egg from [`pterodactyl/egg-pocketbase.json`](pterodactyl/egg-pocketbase.json) into your panel's Nest, configure the Docker image, and set your environment variables.
 
-**CI/CD pipelines (set up on this fork):**
+**CI pipeline:**
 - [`docker-publish`](.github/workflows/docker-publish.yml) — builds and pushes the image to `ghcr.io/instax-dutta/pocketbase` on every push to `master` and on version tags.
-- [`upstream-sync`](.github/workflows/upstream-sync.yml) — runs daily, merges upstream `pocketbase/pocketbase` changes, and pushes them back. The push triggers `docker-publish` automatically so your Docker image stays current.
-  > **Note:** To trigger downstream workflows on push, set a `SYNC_TOKEN` secret with a classic PAT (`repo` + `workflow` scopes). Without it, the sync still works but the image won't auto-rebuild.
 
 ### Testing
 
