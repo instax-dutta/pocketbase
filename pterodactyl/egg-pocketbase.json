@@ -1,12 +1,10 @@
 {
-    "_comment": "Pterodactyl Egg — PocketBase. Import this JSON into your Pterodactyl Panel under Admin → Nest → Import Egg.",
     "name": "PocketBase",
-    "author": "community",
-    "description": "PocketBase — open-source backend for your next SaaS and mobile app in one file. SQLite, real-time subscriptions, auth, file storage, admin dashboard, and JS hooks.\n\nSecurity notes:\n  • The container runs as non-root (UID 65532) with no shell.\n  • Mount a persistent volume at /pb_data — the root filesystem is read-only.\n  • Set POCKETBASE_ENCRYPTION to a 32-character key to encrypt settings at rest.\n  • Configure CORS origins explicitly in production via POCKETBASE_ORIGINS.\n\nBuild the image:\n  docker build -t your-registry/pocketbase:latest .\n  docker push your-registry/pocketbase:latest\n\nThen reference your image in the docker_images field below.",
+    "author": "00000000-0000-0000-0000-000000000000",
+    "description": "PocketBase — open-source backend for your next SaaS and mobile app in one file. SQLite, real-time subscriptions, auth, file storage, admin dashboard, and JS hooks.",
     "version": "1.0.0",
     "docker_images": {
-        "PocketBase (ghcr.io/pocketbase/pocketbase)": "ghcr.io/pocketbase/pocketbase:latest",
-        "PocketBase (your-custom-build)": "your-registry/pocketbase:latest"
+        "PocketBase (ghcr.io/instax-dutta/pocketbase)": "ghcr.io/instax-dutta/pocketbase:latest"
     },
     "startup": "{{STARTUP_CMD}}",
     "config": {
@@ -17,13 +15,13 @@
         },
         "stop": "SIGTERM",
         "logs": {
-            "custom": true,
-            "location": "{{POCKETBASE_DIR}}/auxiliary.db"
+            "custom": false,
+            "location": "data/logs"
         }
     },
     "scripts": {
         "installation": {
-            "script": "# PocketBase docker image — no installation script required.\n# Build & push your image first, then reference it in the egg's docker_images.\necho \"PocketBase image ready.\"",
+            "script": "echo \"No installation required — using prebuilt Docker image.\"",
             "container": "alpine:3.20",
             "entrypoint": "ash"
         }
@@ -66,13 +64,13 @@
             "rules": "required|string"
         },
         {
-            "name": "Encryption Key (32 chars)",
-            "description": "Name of environment variable that holds a 32-character encryption key for settings at rest. Leave default unless you know what you're doing.",
+            "name": "Encryption Key",
+            "description": "Set a 32-character encryption key to encrypt settings at rest (SMTP/S3 credentials, etc.). Leave blank for no encryption.",
             "env_variable": "POCKETBASE_ENCRYPTION",
             "default_value": "",
-            "user_viewable": false,
+            "user_viewable": true,
             "user_editable": true,
-            "rules": "string"
+            "rules": "string|max:32"
         },
         {
             "name": "JS Hooks Directory",
@@ -108,7 +106,7 @@
             "default_value": "30",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|integer|between:1,300"
+            "rules": "required|integer|min:1|max:300"
         }
     ]
 }
