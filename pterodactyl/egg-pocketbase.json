@@ -1,0 +1,114 @@
+{
+    "_comment": "Pterodactyl Egg — PocketBase. Import this JSON into your Pterodactyl Panel under Admin → Nest → Import Egg.",
+    "name": "PocketBase",
+    "author": "community",
+    "description": "PocketBase — open-source backend for your next SaaS and mobile app in one file. SQLite, real-time subscriptions, auth, file storage, admin dashboard, and JS hooks.\n\nSecurity notes:\n  • The container runs as non-root (UID 65532) with no shell.\n  • Mount a persistent volume at /pb_data — the root filesystem is read-only.\n  • Set POCKETBASE_ENCRYPTION to a 32-character key to encrypt settings at rest.\n  • Configure CORS origins explicitly in production via POCKETBASE_ORIGINS.\n\nBuild the image:\n  docker build -t your-registry/pocketbase:latest .\n  docker push your-registry/pocketbase:latest\n\nThen reference your image in the docker_images field below.",
+    "version": "1.0.0",
+    "docker_images": {
+        "PocketBase (ghcr.io/pocketbase/pocketbase)": "ghcr.io/pocketbase/pocketbase:latest",
+        "PocketBase (your-custom-build)": "your-registry/pocketbase:latest"
+    },
+    "startup": "{{STARTUP_CMD}}",
+    "config": {
+        "files": "{}",
+        "startup": {
+            "done": "Server started at",
+            "userInteraction": []
+        },
+        "stop": "SIGTERM",
+        "logs": {
+            "custom": true,
+            "location": "{{POCKETBASE_DIR}}/auxiliary.db"
+        }
+    },
+    "scripts": {
+        "installation": {
+            "script": "# PocketBase docker image — no installation script required.\n# Build & push your image first, then reference it in the egg's docker_images.\necho \"PocketBase image ready.\"",
+            "container": "alpine:3.20",
+            "entrypoint": "ash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Startup Command",
+            "description": "Startup command with {{VARIABLE}} placeholders. Override at your own risk.",
+            "env_variable": "STARTUP_CMD",
+            "default_value": "./pocketbase serve --dir={{POCKETBASE_DIR}} --http={{POCKETBASE_HTTP}} --origins={{POCKETBASE_ORIGINS}} --encryptionEnv=POCKETBASE_ENCRYPTION --hooksDir={{POCKETBASE_HOOKS_DIR}} --migrationsDir={{POCKETBASE_MIGRATIONS_DIR}} --publicDir={{POCKETBASE_PUBLIC_DIR}} --queryTimeout={{POCKETBASE_QUERY_TIMEOUT}}",
+            "user_viewable": true,
+            "user_editable": false,
+            "rules": "required|string"
+        },
+        {
+            "name": "Data Directory",
+            "description": "Directory for PocketBase data (SQLite DBs, storage, backups, cert cache). Must match Docker volume mount.",
+            "env_variable": "POCKETBASE_DIR",
+            "default_value": "/pb_data",
+            "user_viewable": true,
+            "user_editable": false,
+            "rules": "required|string"
+        },
+        {
+            "name": "HTTP Listen Address",
+            "description": "TCP address for the HTTP server. Default 0.0.0.0:8090 — typically behind a Pterodactyl reverse proxy.",
+            "env_variable": "POCKETBASE_HTTP",
+            "default_value": "0.0.0.0:8090",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string"
+        },
+        {
+            "name": "CORS Origins",
+            "description": "Comma-separated list of allowed CORS origins. In production, replace * with your actual domain(s).",
+            "env_variable": "POCKETBASE_ORIGINS",
+            "default_value": "*",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string"
+        },
+        {
+            "name": "Encryption Key (32 chars)",
+            "description": "Name of environment variable that holds a 32-character encryption key for settings at rest. Leave default unless you know what you're doing.",
+            "env_variable": "POCKETBASE_ENCRYPTION",
+            "default_value": "",
+            "user_viewable": false,
+            "user_editable": true,
+            "rules": "string"
+        },
+        {
+            "name": "JS Hooks Directory",
+            "description": "Path to JS app hooks (pb_hooks). Relative to data dir if not absolute.",
+            "env_variable": "POCKETBASE_HOOKS_DIR",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "string"
+        },
+        {
+            "name": "Migrations Directory",
+            "description": "Path to custom JS/Go migrations. Relative to data dir if not absolute.",
+            "env_variable": "POCKETBASE_MIGRATIONS_DIR",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "string"
+        },
+        {
+            "name": "Public Directory",
+            "description": "Path to static files (pb_public). Relative to executable if not absolute.",
+            "env_variable": "POCKETBASE_PUBLIC_DIR",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "string"
+        },
+        {
+            "name": "Query Timeout (seconds)",
+            "description": "Default SELECT query timeout in seconds.",
+            "env_variable": "POCKETBASE_QUERY_TIMEOUT",
+            "default_value": "30",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|integer|between:1,300"
+        }
+    ]
+}

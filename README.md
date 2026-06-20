@@ -119,6 +119,37 @@ windows amd64
 windows arm64
 ```
 
+### Docker (production / Pterodactyl)
+
+PocketBase can be deployed as a hardened Docker container suitable for Pterodactyl or any Docker host. A multi-stage `Dockerfile` and Pterodactyl egg are included.
+
+**Build the image:**
+
+```sh
+docker build -t pocketbase:latest .
+```
+
+**Run locally:**
+
+```sh
+docker run -d \
+  --name pocketbase \
+  -v pb_data:/pb_data \
+  -e POCKETBASE_ENCRYPTION="<32-char-encryption-key>" \
+  -p 8090:8090 \
+  pocketbase:latest
+```
+
+**Security features of the container:**
+- Base image: `gcr.io/distroless/static-debian12:nonroot` — no shell, no package manager, no utilities
+- Runs as non-root UID 65532
+- Read-only root filesystem (data goes to mounted `/pb_data` volume)
+- Single static Go binary with CGO disabled and symbols stripped
+- CA certificates included for autocert, OAuth, S3, and SMTP TLS
+- Settings-at-rest encryption via `--encryptionEnv=POCKETBASE_ENCRYPTION`
+
+For Pterodactyl, import the egg from [`pterodactyl/egg-pocketbase.json`](pterodactyl/egg-pocketbase.json) into your panel's Nest, configure the Docker image, and set your environment variables.
+
 ### Testing
 
 PocketBase comes with mixed bag of unit and integration tests.
