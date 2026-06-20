@@ -1,6 +1,6 @@
 {
     "name": "PocketBase",
-    "author": "00000000-0000-0000-0000-000000000000",
+    "author": "contact@sdad.pro",
     "description": "PocketBase — open-source backend for your next SaaS and mobile app in one file. SQLite, real-time subscriptions, auth, file storage, admin dashboard, and JS hooks.",
     "version": "1.0.0",
     "docker_images": {
